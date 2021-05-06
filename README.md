@@ -12,10 +12,10 @@
 ## :man_technologist: How to use?
 1.  Clone the repository :octocat:
     ```bash
-    git clone 
+    git clone https://github.com/RAvengineer/vad-bot.git
     cd vad-bot
     ```
-1.  Create a webhook in the desired Discord channel
+1.  Create a webhook in the desired Discord channel. Follow this [Intro to Webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) official guide for learning how to create & manage a webhook.
 1.  Follow the guidelines for `.env` file provided below (next section) :arrow_double_down:
 1.  Install required libraries
     ```bash
