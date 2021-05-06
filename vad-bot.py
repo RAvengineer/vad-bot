@@ -24,7 +24,7 @@ def fetchData(district_id: int, date: datetime) -> dict:
     return resp.json()
 
 
-def get_available_centers(data: dict) -> list:
+def getAvailableCenters(data: dict) -> list:
     available_centers = list()
 
     for center in data['centers']:
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         while(True):
             dt = datetime.now()
             data = fetchData(district_id=getenv('DISTRICT_ID'), date=dt)
-            centers = get_available_centers(data)
+            centers = getAvailableCenters(data)
             if(centers):
                 notifyOnDiscord(available_centers = centers)
             sleep(30)
