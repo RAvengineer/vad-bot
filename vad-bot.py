@@ -2,6 +2,7 @@ from requests import get, post
 from dotenv import load_dotenv
 from os import getenv
 from time import sleep
+from datetime import datetime
 
 API_SETU_URL = 'https://cdn-api.co-vin.in/api/v2/'
 APPOINTMENTS_AVAILABILITY = 'appointment/sessions/public/'
@@ -10,16 +11,16 @@ CALENDAR_DISTRICT = 'calendarByDistrict'
 load_dotenv()
 DISCORD_WEBHOOK_URL = getenv('DISCORD_WEBHOOK_URL')
 
-def fetchData(district_id: int, date: str) -> dict:
+def fetchData(district_id: int, date: datetime) -> dict:
     params = {
         'district_id': str(district_id),
-        'date': date
+        'date': date.strftime("%d-%m-%Y")
     }
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.51'
     }
     resp = get(url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, params = params, headers= headers)
-    print(f'API response: {resp.status_code}')
+    print(f'{str(date)}\tAPI response: {resp.status_code}')
     return resp.json()
 
 
@@ -37,7 +38,7 @@ def get_available_centers(data: dict) -> list:
 
 def notifyOnDiscord(available_centers: list) -> None:
     body = {
-        'content': '**Available centers:**\n' + available_centers
+        'content': '**Available centers:**\n' + '\n'.join(available_centers)
     }
     webhook_params = {
         'Content-Type': 'multipart/form-data' 
@@ -48,7 +49,8 @@ def notifyOnDiscord(available_centers: list) -> None:
 if __name__ == "__main__":
     try:
         while(True):
-            data = fetchData(district_id=getenv('DISTRICT_ID'), date='06-05-2021')
+            dt = datetime.now()
+            data = fetchData(district_id=getenv('DISTRICT_ID'), date=dt)
             centers = get_available_centers(data)
             if(centers):
                 notifyOnDiscord(available_centers = centers)
