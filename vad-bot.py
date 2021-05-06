@@ -1,6 +1,7 @@
 from requests import get, post
 from dotenv import load_dotenv
 from os import getenv
+from time import sleep
 
 API_SETU_URL = 'https://cdn-api.co-vin.in/api/v2/'
 APPOINTMENTS_AVAILABILITY = 'appointment/sessions/public/'
@@ -42,3 +43,15 @@ def notifyOnDiscord(available_centers: list) -> None:
         'Content-Type': 'multipart/form-data' 
     }
     print('Discord Webhook: ', post(url=DISCORD_WEBHOOK_URL, json=body, params=webhook_params))
+
+
+if __name__ == "__main__":
+    try:
+        while(True):
+            data = fetchData(district_id=getenv('DISTRICT_ID'), date='06-05-2021')
+            centers = get_available_centers(data)
+            if(centers):
+                notifyOnDiscord(available_centers = centers)
+            sleep(30)
+    except Exception as e:
+        print(str(e))
