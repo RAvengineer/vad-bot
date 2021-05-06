@@ -42,13 +42,14 @@ def fetchCalendarByPinCode(pincode: str, date: datetime) -> dict:
         'date': date.strftime("%d-%m-%Y")
     }
     resp = get(
-        url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, 
+        url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_PINCODE, 
         params = params, 
         headers= API_HEADERS
     )
 
     print(f'{str(date)}\tAPI response: {resp.status_code}')
     if(resp.status_code != 200):
+        print(f'fetchCalendarByPinCode response: {resp.content}')
         return None
     return resp.json()
 
@@ -71,6 +72,29 @@ def getAvailableCenters(data: dict) -> list:
     return available_centers
 
 
+def fetchData() -> dict:
+    dt = datetime.now()
+    search_by = getenv('SEARCH_BY')
+    if (search_by == 'DISTRICT'):
+        data = fetchCalendarByDistrict(district_id=getenv('DISTRICT_ID'), date=dt)
+        if(not data):
+            raise Exception('API_Error: fetchCalendarByDistrict returned None')
+        return data
+    elif (search_by == 'PINCODE'):
+        data = {'centers': []}
+        pincodes = list((getenv('LIST_OF_PINCODES')[1:-1]).split(', '))
+        for pincode in pincodes:
+            resp = fetchCalendarByPinCode(pincode, dt)
+            if(not resp):
+                raise Exception('API_Error: fetchCalendarByDistrict returned None')
+            data['centers'].extend(resp['centers'])
+        return data
+    else:
+        error_title = 'Error in fetchData: Invalid SEARCH_BY mode.'
+        error_body = 'SEARCH_BY variable in .env should be either DISTRICT or PINCODE'
+        raise Exception(error_title + '\n' + error_body)
+
+
 def notifyOnDiscord(available_centers: list) -> None:
     body = {
         'content': '**Available centers:**\n' + '\n'.join(available_centers)
@@ -86,10 +110,7 @@ if __name__ == "__main__":
     try:
         previous_centers = list()
         while(True):
-            dt = datetime.now()
-            data = fetchCalendarByDistrict(district_id=getenv('DISTRICT_ID'), date=dt)
-            if(not data):
-                raise Exception('API_Error: fetchCalendarByDistrict returned None')
+            data = fetchData()
             centers = getNewCenters(
                 old_centers=previous_centers, 
                 new_centers=getAvailableCenters(data)
