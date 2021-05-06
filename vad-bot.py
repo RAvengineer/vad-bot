@@ -1,16 +1,20 @@
+# Imports
 from requests import get, post
 from dotenv import load_dotenv
 from os import getenv
 from time import sleep
 from datetime import datetime
 
+# Global Variables
 API_SETU_URL = 'https://cdn-api.co-vin.in/api/v2/'
 APPOINTMENTS_AVAILABILITY = 'appointment/sessions/public/'
 CALENDAR_DISTRICT = 'calendarByDistrict'
-
+# Environment Variables
 load_dotenv()
 DISCORD_WEBHOOK_URL = getenv('DISCORD_WEBHOOK_URL')
 
+
+# Functions
 def fetchCalendarByDistrict(district_id: int, date: datetime) -> dict:
     params = {
         'district_id': str(district_id),
@@ -55,6 +59,7 @@ def notifyOnDiscord(available_centers: list) -> None:
     print('Discord Webhook: ', post(url=DISCORD_WEBHOOK_URL, json=body, params=webhook_params))
 
 
+# Driver code
 if __name__ == "__main__":
     try:
         previous_centers = list()
