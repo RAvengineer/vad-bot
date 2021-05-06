@@ -72,9 +72,8 @@ In worst case scenario, the psudo-random function returns the value 20 on every 
 ```
 Now, each pincode requires a seperate request.
 Therefore, number of possible pincodes to avoid your IP being blocked are
-```math
-\lfloor100/15\rfloor = 6 pincodes
-```
+![\lfloor100/15\rfloor = 6 pincodes](https://bit.ly/2Slz56z)
+
 ---
 
 ## :link: References:
