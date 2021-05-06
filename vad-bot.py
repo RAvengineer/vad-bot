@@ -20,7 +20,10 @@ def fetchData(district_id: int, date: datetime) -> dict:
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.51'
     }
     resp = get(url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, params = params, headers= headers)
+
     print(f'{str(date)}\tAPI response: {resp.status_code}')
+    if(resp.status_code != 200):
+        return None
     return resp.json()
 
 
@@ -51,6 +54,8 @@ if __name__ == "__main__":
         while(True):
             dt = datetime.now()
             data = fetchData(district_id=getenv('DISTRICT_ID'), date=dt)
+            if(not data):
+                raise Exception('API_Error: fetchCalendarByDistrict returned None')
             centers = getAvailableCenters(data)
             if(centers):
                 notifyOnDiscord(available_centers = centers)
