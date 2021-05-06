@@ -9,6 +9,10 @@ from datetime import datetime
 API_SETU_URL = 'https://cdn-api.co-vin.in/api/v2/'
 APPOINTMENTS_AVAILABILITY = 'appointment/sessions/public/'
 CALENDAR_DISTRICT = 'calendarByDistrict'
+CALENDAR_PINCODE = 'calendarByPin'
+API_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.51'
+}
 # Environment Variables
 load_dotenv()
 DISCORD_WEBHOOK_URL = getenv('DISCORD_WEBHOOK_URL')
@@ -20,10 +24,28 @@ def fetchCalendarByDistrict(district_id: int, date: datetime) -> dict:
         'district_id': str(district_id),
         'date': date.strftime("%d-%m-%Y")
     }
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.51'
+    resp = get(
+        url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT,
+        params = params,
+        headers= API_HEADERS
+    )
+
+    print(f'{str(date)}\tAPI response: {resp.status_code}')
+    if(resp.status_code != 200):
+        return None
+    return resp.json()
+
+
+def fetchCalendarByPinCode(pincode: str, date: datetime) -> dict:
+    params = {
+        'pincode': pincode,
+        'date': date.strftime("%d-%m-%Y")
     }
-    resp = get(url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, params = params, headers= headers)
+    resp = get(
+        url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, 
+        params = params, 
+        headers= API_HEADERS
+    )
 
     print(f'{str(date)}\tAPI response: {resp.status_code}')
     if(resp.status_code != 200):
