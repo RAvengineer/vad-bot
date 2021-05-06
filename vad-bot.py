@@ -11,7 +11,7 @@ CALENDAR_DISTRICT = 'calendarByDistrict'
 load_dotenv()
 DISCORD_WEBHOOK_URL = getenv('DISCORD_WEBHOOK_URL')
 
-def fetchData(district_id: int, date: datetime) -> dict:
+def fetchCalendarByDistrict(district_id: int, date: datetime) -> dict:
     params = {
         'district_id': str(district_id),
         'date': date.strftime("%d-%m-%Y")
@@ -25,6 +25,12 @@ def fetchData(district_id: int, date: datetime) -> dict:
     if(resp.status_code != 200):
         return None
     return resp.json()
+
+
+def getNewCenters(old_centers: list, new_centers: list) -> list: 
+    x:set = set(old_centers)
+    y:set = set(new_centers)
+    return list(y.union(x).difference(x))
 
 
 def getAvailableCenters(data: dict) -> list:
@@ -51,12 +57,17 @@ def notifyOnDiscord(available_centers: list) -> None:
 
 if __name__ == "__main__":
     try:
+        previous_centers = list()
         while(True):
             dt = datetime.now()
-            data = fetchData(district_id=getenv('DISTRICT_ID'), date=dt)
+            data = fetchCalendarByDistrict(district_id=getenv('DISTRICT_ID'), date=dt)
             if(not data):
                 raise Exception('API_Error: fetchCalendarByDistrict returned None')
-            centers = getAvailableCenters(data)
+            centers = getNewCenters(
+                old_centers=previous_centers, 
+                new_centers=getAvailableCenters(data)
+            )
+            previous_centers = centers
             if(centers):
                 notifyOnDiscord(available_centers = centers)
             sleep(30)
