@@ -9,29 +9,32 @@ CALENDAR_DISTRICT = 'calendarByDistrict'
 load_dotenv()
 DISCORD_WEBHOOK_URL = getenv('DISCORD_WEBHOOK_URL')
 
-params = {
-    'district_id': '394',
-    'date': '06-05-2021'
-}
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.51'
-}
-resp = get(url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, params = params, headers= headers)
-print(f'API response: {resp.status_code}')
-data = resp.json()
+def fetchData(district_id: int, date: str) -> dict:
+    params = {
+        'district_id': str(district_id),
+        'date': date
+    }
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Edg/90.0.818.51'
+    }
+    resp = get(url = API_SETU_URL+APPOINTMENTS_AVAILABILITY+CALENDAR_DISTRICT, params = params, headers= headers)
+    print(f'API response: {resp.status_code}')
+    return resp.json()
 
-available_centers = ''
 
-for center in data['centers']:
-    available = False
-    for session in center['sessions']:
-        if(session['available_capacity'] > 0):
-            available = True
-            break
-    if(available):
-        available_centers += f"{center['pincode']} - {center['name']}\n"
+def get_available_centers(data: dict) -> list:
+    available_centers = list()
 
-if(available_centers):
+    for center in data['centers']:
+        for session in center['sessions']:
+            if(session['available_capacity'] > 0):
+                available_centers.append(f"{center['pincode']} - {center['name']}")
+                break
+    
+    return available_centers
+
+
+def notifyOnDiscord(available_centers: list) -> None:
     body = {
         'content': '**Available centers:**\n' + available_centers
     }
@@ -39,5 +42,3 @@ if(available_centers):
         'Content-Type': 'multipart/form-data' 
     }
     print('Discord Webhook: ', post(url=DISCORD_WEBHOOK_URL, json=body, params=webhook_params))
-else:
-    print('No centers found')
