@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from os import getenv
 from time import sleep
 from datetime import datetime
+from random import randint
 
 # Global Variables
 API_SETU_URL = 'https://cdn-api.co-vin.in/api/v2/'
@@ -110,14 +111,23 @@ if __name__ == "__main__":
     try:
         previous_centers = list()
         while(True):
+            # Fetch & process data
             data = fetchData()
             centers = getNewCenters(
                 old_centers=previous_centers, 
                 new_centers=getAvailableCenters(data)
             )
+
+            # Avoid Repetition of centers
+            # Current solution repeats centers every alternate cycle
             previous_centers = centers
             if(centers):
                 notifyOnDiscord(available_centers = centers)
-            sleep(30)
+            
+            # APIs are subject to a rate limit of 100 API calls per 5 minutes per IP
+            delay_duration = randint(20, 40)
+            print(f'Train will depart after {delay_duration} sec')
+            sleep(delay_duration)
+            
     except Exception as e:
         print(str(e))
