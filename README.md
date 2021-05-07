@@ -87,3 +87,4 @@ Therefore, number of possible pincodes to avoid your IP being blocked are
 - Misc
     - Avoid Repetion of centers: [set difference using subtraction | StackOverflow](https://stackoverflow.com/a/48038480)
     - [Add comments in .env](https://akhromieiev.com/how-to-add-comment-in-env-file/)
+    - [Running & killing Python programs in the background | GeeksForGeeks](https://www.geeksforgeeks.org/running-python-program-in-the-background/)
