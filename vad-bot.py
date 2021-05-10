@@ -20,9 +20,9 @@ DISCORD_WEBHOOK_URL = getenv('DISCORD_WEBHOOK_URL')
 
 
 # Functions
-def fetchCalendarByDistrict(district_id: int, date: datetime) -> dict:
+def fetchCalendarByDistrict(district_id: str, date: datetime) -> dict:
     params = {
-        'district_id': str(district_id),
+        'district_id': district_id,
         'date': date.strftime("%d-%m-%Y")
     }
     resp = get(
