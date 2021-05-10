@@ -53,6 +53,24 @@ LIST_OF_PINCODES = [201301, 301233, 401408, 501209, 801301, 901304]
 1.  Use `Ctrl + Shift + V` to paste the copied text contents
 1.  Press `Ctrl + S`, followed by `Ctrl + X` to save & exit the file
 
+**:question: How to find your DISTRICT_ID?**
+1.  Open [this](https://cdn-api.co-vin.in/api/v2/admin/location/states) link containing the list of `state_id` & `state_name`
+1.  Press `Ctrl+F` and type your State name. You will be find you state in the form of
+    ```json
+    {"state_id":21,"state_name":"Maharashtra"}
+    ```
+1.  Note down the State ID, for the above example it is `21`.
+1.  Copy & paste 
+    `https://cdn-api.co-vin.in/api/v2/admin/location/districts/state_id`
+    in your address bar (Don't hit search/Enter/Return yet!)
+1.  Replace `state_id` in the above link with the State ID noted down in the 4th step. Then, hit Enter/Return/search
+1. Again, there will be a list of districts displayed with `district_id` & `district_name`
+1. Press `Ctrl+F` and type your District name. You will be find you district in the form of
+    ```json
+    {"district_id":395,"district_name":"Mumbai"}
+    ```
+1.  Replace `YOUR-3-DIGIT-DISTRICT-ID-HERE` in `.env` file with the District ID found in the previous step
+
 ### Note for `PINCODE` mode users
 > **TL;DR:** In `PINCODE` mode, limit the number of pincodes in the list to **6**
 
