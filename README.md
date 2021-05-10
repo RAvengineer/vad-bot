@@ -17,6 +17,11 @@
     ```
 1.  Create a webhook in the desired Discord channel. Follow this [Intro to Webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) official guide for learning how to create & manage a webhook.
 1.  Follow the guidelines for `.env` file provided below (next section) :arrow_double_down:
+1.  *(Optional)* Create a virtual environment *[Requires Python 3+]*
+    ```bash
+    python -m venv venv
+    source ./venv/bin/activate
+    ```
 1.  Install required libraries
     ```bash
     pip install -r requirements.txt
