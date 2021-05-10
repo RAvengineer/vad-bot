@@ -83,7 +83,7 @@ def fetchData() -> dict:
         return data
     elif (search_by == 'PINCODE'):
         data = {'centers': []}
-        pincodes = list((getenv('LIST_OF_PINCODES')[1:-1]).split(', '))
+        pincodes = (getenv('LIST_OF_PINCODES')[1:-1]).replace(' ', '').split(',')
         for pincode in pincodes:
             resp = fetchCalendarByPinCode(pincode, dt)
             if(not resp):
